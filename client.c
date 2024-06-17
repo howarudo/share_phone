@@ -30,18 +30,20 @@ void call(int s){
         }else {
             if(read_data == 0){
                 break;
-            }
-            else{
+            }else{
                 send(s,data_send,num,0);
             }
         }
 
         int n = recv(s,data,num,0);
-        if(n == -1){perror("recv");exit(1);}
-        else{
-            if(n == 0){break;}
-            else{
-                int x = fwrite(data,1,num,fp2);
+        if(n == -1){
+            perror("recv");
+            exit(1);
+        }else{
+            if(n == 0){
+                break;
+            }else{
+                fwrite(data,1,num,fp2);
             }
         }
     }
@@ -49,11 +51,11 @@ void call(int s){
 }
 
 void lntrim(char *str) {
-  char *p;
-  p = strchr(str, '\n');
-  if(p != NULL) {
-    *p = '\0';
-  }
+    char *p;
+    p = strchr(str, '\n');
+    if(p != NULL) {
+        *p = '\0';
+    }
 }
 
 int main(int argc,char** argv){
@@ -64,7 +66,12 @@ int main(int argc,char** argv){
     addr.sin_family = AF_INET;
     addr.sin_addr.s_addr = inet_addr(argv[1]);
     addr.sin_port = htons(atoi(argv[2]));
+
     int ret = connect(s,(struct sockaddr *)&addr, sizeof(addr));
+    if (ret == -1){
+        perror("connect");
+        exit(1);
+    }
 
     while(1){
         char string[1];
@@ -82,7 +89,7 @@ int main(int argc,char** argv){
     }
 
 
-    char* IP_addr;
+    char* IP_addr = malloc(sizeof(char)*20);
     while(fgets(IP_addr, 20, IP) != NULL) {
         FILE * f_log = fopen("log.txt","w");
         fprintf(f_log,"%s",IP_addr);
@@ -95,6 +102,10 @@ int main(int argc,char** argv){
             addr.sin_addr.s_addr = inet_addr(IP_addr);
             addr.sin_port = htons(50000);
             int ret = connect(s,(struct sockaddr *)&addr, sizeof(addr));
+            if (ret == -1){
+                perror("connect");
+            exit(1);
+            }
 
             call(s);
         }
@@ -105,7 +116,6 @@ int main(int argc,char** argv){
     fprintf(f, "dekita \n");
     int ss = socket(PF_INET, SOCK_STREAM,0);
     int a = 50000;
-    int i = 0;
 
     while(1){
         struct sockaddr_in addr;
@@ -128,4 +138,5 @@ int main(int argc,char** argv){
         }
 
     }
+    free(IP_addr);
 }
