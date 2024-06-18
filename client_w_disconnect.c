@@ -9,10 +9,12 @@
 #include <unistd.h>
 #include <pthread.h>
 
-
+#define CSERVER_PORT 50000
+#define BUFFER_SIZE 4096
 #include <string.h>
 
 int running = 1;
+
 
 void* monitor_stdin(void* arg) {
     while (running) {
@@ -27,9 +29,8 @@ void* monitor_stdin(void* arg) {
 void call(int s){
     FILE* fp;
     FILE* fp2;
-    int num = 4096;
-    char data[num];
-    char data_send[num];
+    char data[BUFFER_SIZE];
+    char data_send[BUFFER_SIZE];
 
     char* cmd = "rec -t raw -b 16 -c 1 -e s -r 48000 -";
     fp = popen(cmd,"r");
@@ -40,7 +41,7 @@ void call(int s){
     pthread_create(&stdin_thread, NULL, monitor_stdin, NULL);
 
     while(running){
-        int read_data = fread(data_send,1,num,fp);
+        int read_data = fread(data_send,1,BUFFER_SIZE,fp);
         if(read_data == -1){
             perror("read_data");
             exit(1);
@@ -48,11 +49,11 @@ void call(int s){
             if(read_data == 0){
                 break;
             }else{
-                send(s,data_send,num,0);
+                send(s,data_send,BUFFER_SIZE,0);
             }
         }
 
-        int n = recv(s,data,num,0);
+        int n = recv(s,data,BUFFER_SIZE,0);
         if(n == -1){
             perror("recv");
             exit(1);
@@ -60,7 +61,7 @@ void call(int s){
             if(n == 0){
                 break;
             }else{
-                fwrite(data,1,num,fp2);
+                fwrite(data,1,BUFFER_SIZE,fp2);
             }
         }
     }
