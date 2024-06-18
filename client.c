@@ -10,12 +10,14 @@
 
 #include <string.h>
 
+#define CSERVER_PORT 50000
+#define BUFFER_SIZE 4096
+
 void call(int s){
     FILE* fp;
     FILE* fp2;
-    int num = 4096;
-    char data[num];
-    char data_send[num];
+    char data[BUFFER_SIZE];
+    char data_send[BUFFER_SIZE];
 
     char* cmd = "rec -t raw -b 16 -c 1 -e s -r 48000 -";
     fp = popen(cmd,"r");
@@ -23,7 +25,7 @@ void call(int s){
     fp2 = popen(cmd2,"w");
 
     while(1){
-        int read_data = fread(data_send,1,num,fp);
+        int read_data = fread(data_send,1,BUFFER_SIZE,fp);
         if(read_data == -1){
             perror("read_data");
             exit(1);
@@ -31,11 +33,11 @@ void call(int s){
             if(read_data == 0){
                 break;
             }else{
-                send(s,data_send,num,0);
+                send(s,data_send,BUFFER_SIZE,0);
             }
         }
 
-        int n = recv(s,data,num,0);
+        int n = recv(s,data,BUFFER_SIZE,0);
         if(n == -1){
             perror("recv");
             exit(1);
@@ -43,7 +45,7 @@ void call(int s){
             if(n == 0){
                 break;
             }else{
-                fwrite(data,1,num,fp2);
+                fwrite(data,1,BUFFER_SIZE,fp2);
             }
         }
     }
@@ -60,6 +62,10 @@ void lntrim(char *str) {
 
 int main(int argc,char** argv){
     FILE * IP = fopen("IP.txt","w");
+    if (argc != 3) {
+        fprintf(stderr, "Usage: %s <ip> <port>\n", argv[0]);
+        exit(1);
+    }
 
     int s = socket(PF_INET,SOCK_STREAM,0);
     struct sockaddr_in addr;
@@ -100,7 +106,7 @@ int main(int argc,char** argv){
             struct sockaddr_in addr;
             addr.sin_family = AF_INET;
             addr.sin_addr.s_addr = inet_addr(IP_addr);
-            addr.sin_port = htons(50000);
+            addr.sin_port = htons(CSERVER_PORT);
             int ret = connect(s,(struct sockaddr *)&addr, sizeof(addr));
             if (ret == -1){
                 perror("connect");
@@ -115,12 +121,11 @@ int main(int argc,char** argv){
     FILE *f = fopen("./log_queue.txt", "a");
     fprintf(f, "dekita \n");
     int ss = socket(PF_INET, SOCK_STREAM,0);
-    int a = 50000;
 
     while(1){
         struct sockaddr_in addr;
         addr.sin_family = AF_INET;
-        addr.sin_port = htons(a);
+        addr.sin_port = htons(CSERVER_PORT);
         addr.sin_addr.s_addr = INADDR_ANY;
         bind(ss, (struct sockaddr *)&addr, sizeof(addr));
 
