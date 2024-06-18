@@ -10,7 +10,7 @@
 #include <pthread.h>
 #include <string.h>
 
-#define CSERVER_PORT 50000
+#define CSERVER_PORT 70000
 #define BUFFER_SIZE 4096
 
 void check_stopper(int ichi);
@@ -174,7 +174,7 @@ int main(int argc, char** argv){
 
             addr.sin_family = AF_INET;
             addr.sin_addr.s_addr = inet_addr(IP_addr);
-            addr.sin_port = htons(50000);
+            addr.sin_port = htons(CSERVER_PORT);
             int ret = connect(s,(struct sockaddr *)&addr, sizeof(addr));
             if (ret == -1){
                 perror("connect");
@@ -190,7 +190,7 @@ int main(int argc, char** argv){
     fprintf(f, "dekita \n");
     fclose(f);
     int ss = socket(PF_INET, SOCK_STREAM,0);
-    int a = 50000;
+    int a = CSERVER_PORT;
 
     write_to_log("log.txt", "kore kara while hairu yo!", getpid());
     while(1){
@@ -210,12 +210,14 @@ int main(int argc, char** argv){
         int s = accept(ss, (struct sockaddr *)&client_addr, &len);
         write_to_log("log.txt", "ima kara server toshite fork suru yo!", getpid());
         int pid = fork();
+        check_stopper(101);
         if(pid == 0){
             write_to_log("log.txt", "Server toshite clal suru yo", getpid());
             call(s);
             check_stopper(6);
         }
-
+        check_stopper(102);
+        close(s);
     }
     write_to_log("log.txt", "saigo no while nuketa yo!", getpid());
     free(IP_addr);
