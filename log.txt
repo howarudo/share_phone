@@ -1,3 +1,9 @@
-while nuketa yo! 84228
-kore kara while hairu yo! 84228
-while ni kita yo! 84228
+10.100.157.104
+
+while ni kita yo!, Process NO. 88398
+ile nuketa yo! 88398
+kore kara while hairu yo! 88398
+fork dekita yo! 88399
+while ni kita yo! 88398
+Call hajimeta yo! 88399
+Stopper ni yotte process ga shuuryou saremashita! 88399

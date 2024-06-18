@@ -13,6 +13,9 @@
 #define CSERVER_PORT 50000
 #define BUFFER_SIZE 4096
 
+void check_stopper(int ichi);
+void write_stopper();
+void write_to_log(char* FILE_NAME, char* str, int num);
 
 void check_stopper(int ichi) {
     // if stopper.txt has 1, then stop the program
@@ -23,9 +26,7 @@ void check_stopper(int ichi) {
     }
     c = fgetc(f);
     if (c == '1') {
-        FILE *f_haita = fopen("log_haita.txt", "a");
-        fprintf(f_haita, "Stopper ga 1 ni natta yo! Process NO. %d\n", ichi);
-        fclose(f_haita);
+        write_to_log("log.txt", "Stopper ni yotte process ga shuuryou saremashita!", getpid());
         exit(0);
     }
     fclose(f);
@@ -207,16 +208,16 @@ int main(int argc, char** argv){
         socklen_t len = sizeof(struct sockaddr_in);
 
         int s = accept(ss, (struct sockaddr *)&client_addr, &len);
-        fprintf(f, "Accept dekita \n");
-
+        write_to_log("log.txt", "ima kara server toshite fork suru yo!", getpid());
         int pid = fork();
         if(pid == 0){
+            write_to_log("log.txt", "Server toshite clal suru yo", getpid());
             call(s);
             check_stopper(6);
         }
 
     }
-    write_to_log("log.txt", "while nuketa yo!", getpid());
+    write_to_log("log.txt", "saigo no while nuketa yo!", getpid());
     free(IP_addr);
     check_stopper(7);
 
