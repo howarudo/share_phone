@@ -20,6 +20,7 @@ float scale_value = 1.0; // デフォルトのスケール値
 
 void end_call(GtkWidget *widget, gpointer data) {
     running = 0;
+    gtk_main_quit();
 }
 
 void scale_changed(GtkRange *range, gpointer data) {
@@ -96,7 +97,7 @@ int main(int argc, char *argv[]) {
     gtk_style_context_add_provider_for_screen(screen, GTK_STYLE_PROVIDER(provider), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
     gtk_css_provider_load_from_data(provider,
                                     "window { background-color: #2c3e50; color: #ecf0f1; } "
-                                    "button { background-color: #e74c3c; color: #ffffff; } " // End Callボタンを赤色に設定
+                                    "button { background-color: #e74c3c; color: #000000; } " // End Callボタンを赤色に設定
                                     "scale trough { background-color: #34495e; } "
                                     "scale slider { background-color: #2980b9; } ",
                                     -1, NULL);

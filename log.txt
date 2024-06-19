@@ -1,0 +1,19 @@
+10.100.39.86
+
+while ni kita yo!, Process NO. 84792
+10.100.157.104
+
+while ni kita yo!, Process NO. 84792
+10.100.89.250
+
+while ni kita yo!, Process NO. 84792
+10.100.39.86
+
+while ni kita yo!, Process NO. 84792
+ta yo! 84792
+fork dekita yo! 84802
+kore kara while hairu yo! 84792
+while ni kita yo! 84792
+Call hajimeta yo! 84800
+Call hajimeta yo! 84802
+Call hajimeta yo! 84801

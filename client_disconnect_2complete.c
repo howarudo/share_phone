@@ -8,18 +8,51 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <pthread.h>
-
-#define CSERVER_PORT 50000
-#define BUFFER_SIZE 4096
 #include <string.h>
 
-int running = 1;
+#define CSERVER_PORT 70000
+#define BUFFER_SIZE 8192
+
+void check_stopper(int ichi);
+void write_stopper();
+void write_to_log(char* FILE_NAME, char* str, int num);
+
+void check_stopper(int ichi) {
+    // if stopper.txt has 1, then stop the program
+    FILE *f = fopen("stopper.txt", "r");
+    char c;
+    if (f == NULL) {
+        return;
+    }
+    c = fgetc(f);
+    if (c == '1') {
+        write_to_log("log.txt", "Stopper ni yotte process ga shuuryou saremashita!", getpid());
+        exit(0);
+    }
+    fclose(f);
+    return;
+}
+
+void write_stopper() {
+    // Write to file "stopper.txt"
+    FILE *f = fopen("stopper.txt", "w");
+    fprintf(f, "1");
+    fclose(f);
+    return;
+}
+
+void write_to_log(char* FILE_NAME, char* str, int num) {
+    FILE *f = fopen(FILE_NAME, "a");
+    fprintf(f, "%s %d\n", str, num);
+    fclose(f);
+    return;
+}
 
 
 void* monitor_stdin(void* arg) {
-    while (running) {
+    while (1) {
         if (getchar() == '\n') {
-            running = 0;
+            write_stopper();
             break;
         }
     }
@@ -27,6 +60,7 @@ void* monitor_stdin(void* arg) {
 }
 
 void call(int s){
+    write_to_log("log.txt", "Call hajimeta yo!", getpid());
     FILE* fp;
     FILE* fp2;
     char data[BUFFER_SIZE];
@@ -40,7 +74,8 @@ void call(int s){
     pthread_t stdin_thread;
     pthread_create(&stdin_thread, NULL, monitor_stdin, NULL);
 
-    while(running){
+    while(1){
+        check_stopper(2);
         int read_data = fread(data_send,1,BUFFER_SIZE,fp);
         if(read_data == -1){
             perror("read_data");
@@ -65,8 +100,9 @@ void call(int s){
             }
         }
     }
-    //end test
-    pthread_join(stdin_thread, NULL);
+
+    check_stopper(3);
+    write_to_log("log.txt", "Call owatta yo!", getpid());
 }
 
 void lntrim(char *str) {
@@ -77,11 +113,13 @@ void lntrim(char *str) {
     }
 }
 
-int main(int argc,char** argv){
+int main(int argc, char** argv){
     if (argc != 3) {
         fprintf(stderr, "Usage: %s <ip> <port>\n", argv[0]);
         exit(1);
     }
+    remove("log.txt");
+    remove("stopper.txt");
 
     FILE * IP = fopen("IP.txt","w");
 
@@ -105,6 +143,7 @@ int main(int argc,char** argv){
         }
         fwrite(string,1,1,IP);
     }
+
     fclose(IP);
     IP = fopen("IP.txt","r");
     if(IP == NULL){
@@ -112,16 +151,27 @@ int main(int argc,char** argv){
         exit(1);
     }
 
+    // disconnect from central server
+    close(s);
+
+    check_stopper(4);
 
     char* IP_addr = malloc(sizeof(char)*20);
+    FILE * f_log = fopen("log.txt","w");
     while(fgets(IP_addr, 20, IP) != NULL) {
-        FILE * f_log = fopen("log.txt","w");
-        fprintf(f_log,"%s",IP_addr);
+        check_stopper(5);
+        fprintf(f_log,"%s\n",IP_addr);
+        fprintf(f_log, "while ni kita yo!, Process NO. %d\n", getpid());
+
+        write_to_log("log.txt", "ima kara fork suru yo!", getpid());
         int qid = fork();
+        write_to_log("log.txt", "fork dekita yo!", getpid());
+        // write to log that
         if(qid == 0){
             lntrim(IP_addr);
             int s = socket(PF_INET,SOCK_STREAM,0);
             struct sockaddr_in addr;
+
             addr.sin_family = AF_INET;
             addr.sin_addr.s_addr = inet_addr(IP_addr);
             addr.sin_port = htons(CSERVER_PORT);
@@ -130,20 +180,25 @@ int main(int argc,char** argv){
                 perror("connect");
             exit(1);
             }
-
             call(s);
         }
     }
+    write_to_log("log.txt", "while nuketa yo!", getpid());
 
 
     FILE *f = fopen("./log_queue.txt", "a");
     fprintf(f, "dekita \n");
+    fclose(f);
     int ss = socket(PF_INET, SOCK_STREAM,0);
+    int a = CSERVER_PORT;
 
+    write_to_log("log.txt", "kore kara while hairu yo!", getpid());
     while(1){
+        write_to_log("log.txt", "while ni kita yo!", getpid());
+        check_stopper(100);
         struct sockaddr_in addr;
         addr.sin_family = AF_INET;
-        addr.sin_port = htons(CSERVER_PORT);
+        addr.sin_port = htons(a);
         addr.sin_addr.s_addr = INADDR_ANY;
         bind(ss, (struct sockaddr *)&addr, sizeof(addr));
 
@@ -153,18 +208,20 @@ int main(int argc,char** argv){
         socklen_t len = sizeof(struct sockaddr_in);
 
         int s = accept(ss, (struct sockaddr *)&client_addr, &len);
-        fprintf(f, "Accept dekita \n");
-
+        write_to_log("log.txt", "ima kara server toshite fork suru yo!", getpid());
         int pid = fork();
+        check_stopper(101);
         if(pid == 0){
+            write_to_log("log.txt", "Server toshite clal suru yo", getpid());
             call(s);
-            if(running == 0){
-                break;
-            }
+            check_stopper(6);
         }
-
+        check_stopper(102);
+        close(s);
     }
+    write_to_log("log.txt", "saigo no while nuketa yo!", getpid());
     free(IP_addr);
+    check_stopper(7);
 
-
+    return 0;
 }

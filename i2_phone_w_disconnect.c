@@ -11,8 +11,7 @@
 #include <termios.h>
 
 #define BUFFER_SIZE 4096
-#define TERMINATION_SEQUENCE "TERMINATE_CALL"
-#define TERMINATION_SEQUENCE_LEN 14
+
 
 int running = 1;
 
@@ -93,7 +92,6 @@ int main(int argc, char *argv[]) {
     char DATA_PLY[BUFFER_SIZE];
 
     while (running) {
-        clock_t start = clock();
         int n_rec = fread(DATA_REC, 1, BUFFER_SIZE, fp_rec);
         if (n_rec == -1) {
             perror("read");
@@ -114,7 +112,6 @@ int main(int argc, char *argv[]) {
         }
 
         fwrite(DATA_PLY, 1, n_ply, fp_ply);
-        clock_t end = clock();
         // デバッグのためにファイルまたはコンソールに時間を出力
     }
 
