@@ -10,7 +10,7 @@
 #include <pthread.h>
 #include <string.h>
 
-#define CSERVER_PORT 70000
+#define CSERVER_PORT 50000
 #define BUFFER_SIZE 8192
 
 void check_stopper(int ichi);
