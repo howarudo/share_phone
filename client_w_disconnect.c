@@ -11,7 +11,7 @@
 #include <string.h>
 
 #define CSERVER_PORT 70000
-#define BUFFER_SIZE 4096
+#define BUFFER_SIZE 8192
 
 void check_stopper(int ichi);
 void write_stopper();
