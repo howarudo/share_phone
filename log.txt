@@ -1,19 +1,16 @@
-10.100.39.86
-
-while ni kita yo!, Process NO. 84792
-10.100.157.104
-
-while ni kita yo!, Process NO. 84792
-10.100.89.250
-
-while ni kita yo!, Process NO. 84792
-10.100.39.86
-
-while ni kita yo!, Process NO. 84792
-ta yo! 84792
-fork dekita yo! 84802
-kore kara while hairu yo! 84792
-while ni kita yo! 84792
-Call hajimeta yo! 84800
-Call hajimeta yo! 84802
-Call hajimeta yo! 84801
+[initial client] to shite 10.100.157.104
+ wo yomi kondayo ! [Process No. 13272]
+[initial client] ima kara fork suru yo! 13272
+[initial client] fork dekita yo! 13272
+[phone server] PS ni narimashita! 13272
+[phone server] client matteruyo! 13272
+[initial client] fork dekita yo! 13274
+[initial client] PS to call hazimeruyo! 13274
+Call hajimeta yo! 13274
+[phone server] client kiya!! 
+ima kara PS toshite fork suru yo! 13272
+[phone server] client matteruyo! 13272
+[phone server] Server toshite call suru yo 13306
+Call hajimeta yo! 13306
+Stopper ni yotte process ga shuuryou saremashita! 13306
+Stopper ni yotte process ga shuuryou saremashita! 13274

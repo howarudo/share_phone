@@ -10,7 +10,7 @@
 #include <pthread.h>
 #include <string.h>
 
-#define CSERVER_PORT 50000
+#define CSERVER_PORT 51234
 #define BUFFER_SIZE 8192
 
 // IP.txt IPアドレスを取得
@@ -166,7 +166,7 @@ int main(int argc, char** argv){
     char* IP_addr = malloc(sizeof(char)*20);
     
 
-    // すでにつながっているパソコンの数だけ
+    // すでにつながっているパソコンの数だけ（ここを検証するべき！！！！！！）
     while(fgets(IP_addr, 20, IP) != NULL) {
         check_stopper(5);
 
@@ -179,6 +179,10 @@ int main(int argc, char** argv){
         子プロセス: 読み込んだIPアドレスを使って通話をする
         */ 
         int qid = fork();
+        if(qid == -1){
+            perror("fork");
+            exit(1);
+        }
         write_to_log("log.txt", "[initial client] fork dekita yo!", getpid());
         // write to log that
         if(qid == 0){
@@ -231,6 +235,10 @@ int main(int argc, char** argv){
         int s = accept(socket_to_PC, (struct sockaddr *)&client_addr, &len);
         write_to_log("log.txt", "[phone server] client kiya!! \nima kara PS toshite fork suru yo!", getpid());
         int pid = fork();
+        if(pid == -1){
+            perror("fork");
+            exit(1);
+        }
         check_stopper(101);
         if(pid == 0){
             write_to_log("log.txt", "[phone server] Server toshite call suru yo", getpid());
