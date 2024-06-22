@@ -12,7 +12,6 @@
 
 // Arrays (in a file)
 char IP_FILE_NAME[] = "ip_addresses.txt";
-#define PORT 30000
 
 void handle_client(int client_socket, struct sockaddr_in client_addr);
 

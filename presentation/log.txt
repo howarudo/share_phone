@@ -1,0 +1,14 @@
+[initial client] to shite 10.100.157.104
+ wo yomi kondayo ! [Process No. 78583]
+[initial client] ima kara fork suru yo! 78583
+[initial client] fork dekita yo! 78583
+[initial client] ima kara fork suru yo! 78583
+[initial client] fork dekita yo! 78586
+[initial client] fork dekita yo! 78583
+[phone server] PS ni narimashita! 78583
+[phone server] client matteruyo! 78583
+[initial client] fork dekita yo! 78587
+[initial client] PS to call hazimeruyo! 78587
+Call hajimeta yo! 78587
+[initial client] PS to call hazimeruyo! 78586
+Call hajimeta yo! 78586

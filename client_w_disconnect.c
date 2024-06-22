@@ -124,7 +124,7 @@ int main(int argc,char** argv){
             struct sockaddr_in addr;
             addr.sin_family = AF_INET;
             addr.sin_addr.s_addr = inet_addr(IP_addr);
-            addr.sin_port = htons(CSERVER_PORT);
+            addr.sin_port = htons(USER_PORT);
             int ret = connect(s,(struct sockaddr *)&addr, sizeof(addr));
             if (ret == -1){
                 perror("connect");
@@ -143,7 +143,7 @@ int main(int argc,char** argv){
     while(1){
         struct sockaddr_in addr;
         addr.sin_family = AF_INET;
-        addr.sin_port = htons(CSERVER_PORT);
+        addr.sin_port = htons(USER_PORT);
         addr.sin_addr.s_addr = INADDR_ANY;
         bind(ss, (struct sockaddr *)&addr, sizeof(addr));
 
