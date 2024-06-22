@@ -7,11 +7,24 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-
-#include <string.h>
+#include <pthread.h>
 
 #define CSERVER_PORT 50000
 #define BUFFER_SIZE 4096
+#include <string.h>
+
+int running = 1;
+
+
+void* monitor_stdin(void* arg) {
+    while (running) {
+        if (getchar() == '\n') {
+            running = 0;
+            break;
+        }
+    }
+    return NULL;
+}
 
 void call(int s){
     FILE* fp;
@@ -24,7 +37,10 @@ void call(int s){
     char* cmd2 = "play -t raw -b 16 -c 1 -e s -r 48000 -";
     fp2 = popen(cmd2,"w");
 
-    while(1){
+    pthread_t stdin_thread;
+    pthread_create(&stdin_thread, NULL, monitor_stdin, NULL);
+
+    while(running){
         int read_data = fread(data_send,1,BUFFER_SIZE,fp);
         if(read_data == -1){
             perror("read_data");
@@ -50,6 +66,7 @@ void call(int s){
         }
     }
     //end test
+    pthread_join(stdin_thread, NULL);
 }
 
 void lntrim(char *str) {
@@ -61,11 +78,12 @@ void lntrim(char *str) {
 }
 
 int main(int argc,char** argv){
-    FILE * IP = fopen("IP.txt","w");
     if (argc != 3) {
         fprintf(stderr, "Usage: %s <ip> <port>\n", argv[0]);
         exit(1);
     }
+
+    FILE * IP = fopen("IP.txt","w");
 
     int s = socket(PF_INET,SOCK_STREAM,0);
     struct sockaddr_in addr;
@@ -140,8 +158,13 @@ int main(int argc,char** argv){
         int pid = fork();
         if(pid == 0){
             call(s);
+            if(running == 0){
+                break;
+            }
         }
 
     }
     free(IP_addr);
+
+
 }

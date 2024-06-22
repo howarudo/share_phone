@@ -22,8 +22,8 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
 
-    int ss = socket(AF_INET, SOCK_STREAM, 0);
-    if (ss == -1) {
+    int serv_socket = socket(AF_INET, SOCK_STREAM, 0);
+    if (serv_socket == -1) {
         perror("socket");
         exit(1);
     }
@@ -38,38 +38,38 @@ int main(int argc, char *argv[]) {
     addr.sin_port = htons(atoi(argv[1]));
     addr.sin_addr.s_addr = INADDR_ANY;
 
-    if (bind(ss, (struct sockaddr *)&addr, sizeof(addr)) == -1) {
+    if (bind(serv_socket, (struct sockaddr *)&addr, sizeof(addr)) == -1) {
         perror("bind");
-        close(ss);
+        close(serv_socket);
         exit(1);
     }
 
-    if (listen(ss, 10) == -1) {
+    if (listen(serv_socket, 10) == -1) {
         perror("listen");
-        close(ss);
+        close(serv_socket);
         exit(1);
     }
 
     while (1) {
         struct sockaddr_in client_addr;
         socklen_t len = sizeof(struct sockaddr_in);
-        int s = accept(ss, (struct sockaddr *)&client_addr, &len);
+        int client_socket = accept(serv_socket, (struct sockaddr *)&client_addr, &len);
 
-        if (s == -1) {
+        if (client_socket == -1) {
             perror("accept");
             continue;
         }
 
         if (fork() == 0) {
-            close(ss); // Child process does not need the listening socket
-            handle_client(s, client_addr);
-            close(s);
+            close(serv_socket); // Child process does not need the listening socket
+            handle_client(client_socket, client_addr);
+            close(client_socket);
             exit(0);
         }
-        close(s); // Parent process does not need the connected socket
+        close(client_socket); // Parent process does not need the connected socket
     }
 
-    close(ss);
+    close(serv_socket);
     return 0;
 }
 
@@ -90,3 +90,4 @@ void handle_client(int client_socket, struct sockaddr_in client_addr) {
     fprintf(f, "%s\n", ip);
     fclose(f);
 }
+ // ポート番号

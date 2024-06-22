@@ -1,0 +1,16 @@
+[initial client] to shite 10.100.157.104
+ wo yomi kondayo ! [Process No. 13272]
+[initial client] ima kara fork suru yo! 13272
+[initial client] fork dekita yo! 13272
+[phone server] PS ni narimashita! 13272
+[phone server] client matteruyo! 13272
+[initial client] fork dekita yo! 13274
+[initial client] PS to call hazimeruyo! 13274
+Call hajimeta yo! 13274
+[phone server] client kiya!! 
+ima kara PS toshite fork suru yo! 13272
+[phone server] client matteruyo! 13272
+[phone server] Server toshite call suru yo 13306
+Call hajimeta yo! 13306
+Stopper ni yotte process ga shuuryou saremashita! 13306
+Stopper ni yotte process ga shuuryou saremashita! 13274
